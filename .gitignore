@@ -1,0 +1,62 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json.log*
+
+# Environment variables (keep .env.example)
+.env
+.env.*.local
+config.env
+
+# Logs
+logs/
+*.log
+debug.log
+nodemon-debug.log
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Build / output
+dist/
+build/
+out/
+lib/
+coverage/
+coverage-final.json
+*.map
+*.tgz
+.vite/
+.parcel-cache/
+.next/
+.nuxt/
+.rollup.cache/
+
+# TypeScript
+*.tsbuildinfo
+
+# Editor / OS
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+
+# Temp
+tmp/
+temp/
+.cache/
+*.tmp
+
+# Misc
+.sourcemaps
+.yarn-integrity
+.pids
