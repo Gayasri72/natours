@@ -3,10 +3,7 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: './config.env' });
 
-const db = process.env.MONGO_STRING.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD,
-);
+const db = process.env.MONGO_STRING;
 
 // This code connects to a MongoDB database using Mongoose.
 exports.connectDB = async () => {
