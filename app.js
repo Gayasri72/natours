@@ -136,71 +136,7 @@ const $73e585bd0c7d6b97$export$8d5bdbf26681c0c2 = async (tourId) => {
   }
 };
 
-// DOM ELEMENTS
-const $c74e663a61ed842a$var$mapBox = document.getElementById('map');
-const $c74e663a61ed842a$var$loginForm = document.querySelector('.form--login');
-const $c74e663a61ed842a$var$logOutBtn =
-  document.querySelector('.nav__el--logout');
-const $c74e663a61ed842a$var$userDataForm =
-  document.querySelector('.form-user-data');
-const $c74e663a61ed842a$var$userPasswordForm = document.querySelector(
-  '.form-user-password',
-);
-const $c74e663a61ed842a$var$bookBtn = document.getElementById('book-tour');
-// DELEGATION
-if ($c74e663a61ed842a$var$mapBox) {
-  const locations = JSON.parse($c74e663a61ed842a$var$mapBox.dataset.locations);
-  (0, $b521082dd449d16e$export$4c5dd147b21b9176)(locations);
-}
-if ($c74e663a61ed842a$var$loginForm)
-  $c74e663a61ed842a$var$loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-  });
-if ($c74e663a61ed842a$var$logOutBtn)
-  $c74e663a61ed842a$var$logOutBtn.addEventListener(
-    'click',
-    (0, $433b644962c26f49$export$a0973bcfe11b05c9),
-  );
-if ($c74e663a61ed842a$var$userDataForm)
-  $c74e663a61ed842a$var$userDataForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = new FormData();
-    (0, $6842e7be16478138$export$f558026a994b6051)(form, 'data');
-  });
-if ($c74e663a61ed842a$var$userPasswordForm)
-  $c74e663a61ed842a$var$userPasswordForm.addEventListener(
-    'submit',
-    async (e) => {
-      e.preventDefault();
-      document.querySelector('.btn--save-password').textContent = 'Updating...';
-      await (0, $6842e7be16478138$export$f558026a994b6051)(
-        {
-          passwordCurrent: passwordCurrent,
-          password: password,
-          passwordConfirm: passwordConfirm,
-        },
-        'password',
-      );
-      document.querySelector('.btn--save-password').textContent =
-        'Save password';
-      document.getElementById('password-current').value = '';
-      document.getElementById('password').value = '';
-      document.getElementById('password-confirm').value = '';
-    },
-  );
-if ($c74e663a61ed842a$var$bookBtn)
-  $c74e663a61ed842a$var$bookBtn.addEventListener('click', (e) => {
-    e.target.textContent = 'Processing...';
-    const { tourId: tourId } = e.target.dataset;
-    (0, $73e585bd0c7d6b97$export$8d5bdbf26681c0c2)(tourId);
-  });
-const $c74e663a61ed842a$var$alertMessage =
-  document.querySelector('body').dataset.alert;
-if ($c74e663a61ed842a$var$alertMessage)
-  (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-    'success',
-    $c74e663a61ed842a$var$alertMessage,
-    20,
-  );
+// DOM ELEMENTS removed for server-side compatibility
+// Event listeners removed for server-side compatibility
 
 //# sourceMappingURL=app.js.map
