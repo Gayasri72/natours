@@ -112,7 +112,6 @@ const $6842e7be16478138$export$f558026a994b6051 = async (data, type)=>{
 
 /* eslint-disable */ 
 
-const $73e585bd0c7d6b97$var$stripe = Stripe('pk_test_BUkd0ZXAj6m0q0jMyRgBxNns00PPtgvjjr');
 const $73e585bd0c7d6b97$export$8d5bdbf26681c0c2 = async (tourId)=>{
     try {
         // 1) Get checkout session from API
