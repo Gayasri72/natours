@@ -1,116 +1,185 @@
-const path = require('path');
-const express = require('express');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const compression = require('compression');
-const cors = require('cors');
+require("@babel/polyfill");
+var $cQivH$axios = require("axios");
 
-const AppError = require('./utils/appError');
-const globalErrorHandler = require('./controllers/errorController');
-const tourRouter = require('./routes/tourRoutes');
-const userRouter = require('./routes/userRoutes');
-const reviewRouter = require('./routes/reviewRoutes');
-const bookingRouter = require('./routes/bookingRoutes');
-const bookingController = require('./controllers/bookingController');
-const viewRouter = require('./routes/viewRoutes');
 
-const app = express();
-
-app.enable('trust proxy');
-
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'));
-
-// 1) GLOBAL MIDDLEWARES
-// Implement CORS
-app.use(cors());
-// Access-Control-Allow-Origin *
-// api.natours.com, front-end natours.com
-// app.use(cors({
-//   origin: 'https://www.natours.com'
-// }))
-
-app.options('*', cors());
-// app.options('/api/v1/tours/:id', cors());
-
-// Serving static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Set security HTTP headers
-app.use(helmet());
-
-// Development logging
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+function $parcel$interopDefault(a) {
+  return a && a.__esModule ? a.default : a;
 }
+/* eslint-disable */ 
+/* eslint-disable */ const $b521082dd449d16e$export$4c5dd147b21b9176 = (locations)=>{
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZ2F5YXNyaSIsImEiOiJjbWV6MHJxajUwMThzMmtzZ3BzZ3UydWNyIn0.UN_pXq_zyeEERsfgn14BFQ';
+    const map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: [
+            -74.5,
+            40
+        ],
+        zoom: 9
+    });
+    const bounds = new mapboxgl.LngLatBounds();
+    locations.forEach((loc)=>{
+        // Create marker
+        const el = document.createElement('div');
+        el.className = 'marker';
+        // Add marker
+        new mapboxgl.Marker({
+            element: el,
+            anchor: 'bottom'
+        }).setLngLat(loc.coordinates).addTo(map);
+        // Add popup
+        new mapboxgl.Popup({
+            offset: 30
+        }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`).addTo(map);
+        // Extend map bounds to include current location
+        bounds.extend(loc.coordinates);
+    });
+    map.fitBounds(bounds, {
+        padding: {
+            top: 200,
+            bottom: 150,
+            left: 100,
+            right: 100
+        }
+    });
+};
 
-// Limit requests from same API
-const limiter = rateLimit({
-  max: 100,
-  windowMs: 60 * 60 * 1000,
-  message: 'Too many requests from this IP, please try again in an hour!',
+
+/* eslint-disable */ 
+/* eslint-disable */ const $cf8ea27b34b2137b$export$516836c6a9dfc573 = ()=>{
+    const el = document.querySelector('.alert');
+    if (el) el.parentElement.removeChild(el);
+};
+const $cf8ea27b34b2137b$export$de026b00723010c1 = (type, msg, time = 7)=>{
+    $cf8ea27b34b2137b$export$516836c6a9dfc573();
+    const markup = `<div class="alert alert--${type}">${msg}</div>`;
+    document.querySelector('body').insertAdjacentHTML('afterbegin', markup);
+    window.setTimeout($cf8ea27b34b2137b$export$516836c6a9dfc573, time * 1000);
+};
+
+
+const $433b644962c26f49$export$596d806903d1f59e = async (email, password)=>{
+    try {
+        const res = await (0, ($parcel$interopDefault($cQivH$axios)))({
+            method: 'POST',
+            url: '/api/v1/users/login',
+            data: {
+                email: email,
+                password: password
+            }
+        });
+        if (res.data.status === 'success') {
+            (0, $cf8ea27b34b2137b$export$de026b00723010c1)('success', 'Logged in successfully!');
+            window.setTimeout(()=>{
+                location.assign('/');
+            }, 1500);
+        }
+    } catch (err) {
+        (0, $cf8ea27b34b2137b$export$de026b00723010c1)('error', err.response.data.message);
+    }
+};
+const $433b644962c26f49$export$a0973bcfe11b05c9 = async ()=>{
+    try {
+        const res = await (0, ($parcel$interopDefault($cQivH$axios)))({
+            method: 'GET',
+            url: '/api/v1/users/logout'
+        });
+        res.data.status = 'success';
+        location.reload(true);
+    } catch (err) {
+        console.log(err.response);
+        (0, $cf8ea27b34b2137b$export$de026b00723010c1)('error', 'Error logging out! Try again.');
+    }
+};
+
+
+/* eslint-disable */ 
+
+const $6842e7be16478138$export$f558026a994b6051 = async (data, type)=>{
+    try {
+        const url = type === 'password' ? '/api/v1/users/updateMyPassword' : '/api/v1/users/updateMe';
+        const res = await (0, ($parcel$interopDefault($cQivH$axios)))({
+            method: 'PATCH',
+            url: url,
+            data: data
+        });
+        if (res.data.status === 'success') (0, $cf8ea27b34b2137b$export$de026b00723010c1)('success', `${type.toUpperCase()} updated successfully!`);
+    } catch (err) {
+        (0, $cf8ea27b34b2137b$export$de026b00723010c1)('error', err.response.data.message);
+    }
+};
+
+
+/* eslint-disable */ 
+
+const $73e585bd0c7d6b97$var$stripe = Stripe('pk_test_BUkd0ZXAj6m0q0jMyRgBxNns00PPtgvjjr');
+const $73e585bd0c7d6b97$export$8d5bdbf26681c0c2 = async (tourId)=>{
+    try {
+        // 1) Get checkout session from API
+        const session = await (0, ($parcel$interopDefault($cQivH$axios)))(`/api/v1/bookings/checkout-session/${tourId}`);
+        // console.log(session);
+        // 2) Create checkout form + chanre credit card
+        await $73e585bd0c7d6b97$var$stripe.redirectToCheckout({
+            sessionId: session.data.session.id
+        });
+    } catch (err) {
+        console.log(err);
+        (0, $cf8ea27b34b2137b$export$de026b00723010c1)('error', err);
+    }
+};
+
+
+
+// DOM ELEMENTS
+const $c74e663a61ed842a$var$mapBox = document.getElementById('map');
+const $c74e663a61ed842a$var$loginForm = document.querySelector('.form--login');
+const $c74e663a61ed842a$var$logOutBtn = document.querySelector('.nav__el--logout');
+const $c74e663a61ed842a$var$userDataForm = document.querySelector('.form-user-data');
+const $c74e663a61ed842a$var$userPasswordForm = document.querySelector('.form-user-password');
+const $c74e663a61ed842a$var$bookBtn = document.getElementById('book-tour');
+// DELEGATION
+if ($c74e663a61ed842a$var$mapBox) {
+    const locations = JSON.parse($c74e663a61ed842a$var$mapBox.dataset.locations);
+    (0, $b521082dd449d16e$export$4c5dd147b21b9176)(locations);
+}
+if ($c74e663a61ed842a$var$loginForm) $c74e663a61ed842a$var$loginForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    (0, $433b644962c26f49$export$596d806903d1f59e)(email, password);
 });
-app.use('/api', limiter);
-
-// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
-app.post(
-  '/webhook-checkout',
-  bodyParser.raw({ type: 'application/json' }),
-  bookingController.webhookCheckout,
-);
-
-// Body parser, reading data from body into req.body
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(cookieParser());
-
-// Data sanitization against NoSQL query injection
-app.use(mongoSanitize());
-
-// Data sanitization against XSS
-app.use(xss());
-
-// Prevent parameter pollution
-app.use(
-  hpp({
-    whitelist: [
-      'duration',
-      'ratingsQuantity',
-      'ratingsAverage',
-      'maxGroupSize',
-      'difficulty',
-      'price',
-    ],
-  }),
-);
-
-app.use(compression());
-
-// Test middleware
-app.use((req, res, next) => {
-  req.requestTime = new Date().toISOString();
-  // console.log(req.cookies);
-  next();
+if ($c74e663a61ed842a$var$logOutBtn) $c74e663a61ed842a$var$logOutBtn.addEventListener('click', (0, $433b644962c26f49$export$a0973bcfe11b05c9));
+if ($c74e663a61ed842a$var$userDataForm) $c74e663a61ed842a$var$userDataForm.addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', document.getElementById('photo').files[0]);
+    (0, $6842e7be16478138$export$f558026a994b6051)(form, 'data');
 });
-
-//2) Routes
-
-app.use('/', viewRouter);
-app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/bookings', bookingRouter);
-
-app.all('*', (req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+if ($c74e663a61ed842a$var$userPasswordForm) $c74e663a61ed842a$var$userPasswordForm.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    document.querySelector('.btn--save-password').textContent = 'Updating...';
+    const passwordCurrent = document.getElementById('password-current').value;
+    const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password-confirm').value;
+    await (0, $6842e7be16478138$export$f558026a994b6051)({
+        passwordCurrent: passwordCurrent,
+        password: password,
+        passwordConfirm: passwordConfirm
+    }, 'password');
+    document.querySelector('.btn--save-password').textContent = 'Save password';
+    document.getElementById('password-current').value = '';
+    document.getElementById('password').value = '';
+    document.getElementById('password-confirm').value = '';
 });
+if ($c74e663a61ed842a$var$bookBtn) $c74e663a61ed842a$var$bookBtn.addEventListener('click', (e)=>{
+    e.target.textContent = 'Processing...';
+    const { tourId: tourId } = e.target.dataset;
+    (0, $73e585bd0c7d6b97$export$8d5bdbf26681c0c2)(tourId);
+});
+const $c74e663a61ed842a$var$alertMessage = document.querySelector('body').dataset.alert;
+if ($c74e663a61ed842a$var$alertMessage) (0, $cf8ea27b34b2137b$export$de026b00723010c1)('success', $c74e663a61ed842a$var$alertMessage, 20);
 
-app.use(globalErrorHandler);
 
-module.exports = app;
+//# sourceMappingURL=app.js.map
