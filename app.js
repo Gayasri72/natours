@@ -1,142 +1,116 @@
-require('@babel/polyfill');
-var $cQivH$axios = require('axios');
+const path = require('path');
+const express = require('express');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const compression = require('compression');
+const cors = require('cors');
 
-function $parcel$interopDefault(a) {
-  return a && a.__esModule ? a.default : a;
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/errorController');
+const tourRouter = require('./routes/tourRoutes');
+const userRouter = require('./routes/userRoutes');
+const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
+const viewRouter = require('./routes/viewRoutes');
+
+// Start express app
+const app = express();
+
+app.enable('trust proxy');
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+// 1) GLOBAL MIDDLEWARES
+// Implement CORS
+app.use(cors());
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
+
+// Serving static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Set security HTTP headers
+app.use(helmet());
+
+// Development logging
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
 }
-/* eslint-disable */
-/* eslint-disable */ const $b521082dd449d16e$export$4c5dd147b21b9176 = (
-  locations,
-) => {
-  mapboxgl.accessToken =
-    'pk.eyJ1IjoiZ2F5YXNyaSIsImEiOiJjbWV6MHJxajUwMThzMmtzZ3BzZ3UydWNyIn0.UN_pXq_zyeEERsfgn14BFQ';
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v12',
-    center: [-74.5, 40],
-    zoom: 9,
-  });
-  const bounds = new mapboxgl.LngLatBounds();
-  locations.forEach((loc) => {
-    // Create marker
-    const el = document.createElement('div');
-    el.className = 'marker';
-    // Add marker
-    new mapboxgl.Marker({
-      element: el,
-      anchor: 'bottom',
-    })
-      .setLngLat(loc.coordinates)
-      .addTo(map);
-    // Add popup
-    new mapboxgl.Popup({
-      offset: 30,
-    })
-      .setLngLat(loc.coordinates)
-      .setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`)
-      .addTo(map);
-    // Extend map bounds to include current location
-    bounds.extend(loc.coordinates);
-  });
-  map.fitBounds(bounds, {
-    padding: {
-      top: 200,
-      bottom: 150,
-      left: 100,
-      right: 100,
-    },
-  });
-};
 
-/* eslint-disable */
-/* eslint-disable */ const $cf8ea27b34b2137b$export$516836c6a9dfc573 = () => {};
-const $cf8ea27b34b2137b$export$de026b00723010c1 = (type, msg, time = 7) => {};
+// Limit requests from same API
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!',
+});
+app.use('/api', limiter);
 
-const $433b644962c26f49$export$596d806903d1f59e = async (email, password) => {
-  try {
-    const res = await (0, $parcel$interopDefault($cQivH$axios))({
-      method: 'POST',
-      url: '/api/v1/users/login',
-      data: {
-        email: email,
-        password: password,
-      },
-    });
-    if (res.data.status === 'success') {
-      (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-        'success',
-        'Logged in successfully!',
-      );
-    }
-  } catch (err) {
-    (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-      'error',
-      err.response.data.message,
-    );
-  }
-};
-const $433b644962c26f49$export$a0973bcfe11b05c9 = async () => {
-  try {
-    const res = await (0, $parcel$interopDefault($cQivH$axios))({
-      method: 'GET',
-      url: '/api/v1/users/logout',
-    });
-    res.data.status = 'success';
-  } catch (err) {
-    console.log(err.response);
-    (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-      'error',
-      'Error logging out! Try again.',
-    );
-  }
-};
+// Stripe webhook, BEFORE body-parser, because stripe needs the body as stream
+app.post(
+  '/webhook-checkout',
+  bodyParser.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout,
+);
 
-/* eslint-disable */
+// Body parser, reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true, limit: '10kb' }));
+app.use(cookieParser());
 
-const $6842e7be16478138$export$f558026a994b6051 = async (data, type) => {
-  try {
-    const url =
-      type === 'password'
-        ? '/api/v1/users/updateMyPassword'
-        : '/api/v1/users/updateMe';
-    const res = await (0, $parcel$interopDefault($cQivH$axios))({
-      method: 'PATCH',
-      url: url,
-      data: data,
-    });
-    if (res.data.status === 'success')
-      (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-        'success',
-        `${type.toUpperCase()} updated successfully!`,
-      );
-  } catch (err) {
-    (0, $cf8ea27b34b2137b$export$de026b00723010c1)(
-      'error',
-      err.response.data.message,
-    );
-  }
-};
+// Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
 
-/* eslint-disable */
+// Data sanitization against XSS
+app.use(xss());
 
-const $73e585bd0c7d6b97$export$8d5bdbf26681c0c2 = async (tourId) => {
-  try {
-    // 1) Get checkout session from API
-    const session = await (0, $parcel$interopDefault($cQivH$axios))(
-      `/api/v1/bookings/checkout-session/${tourId}`,
-    );
-    // console.log(session);
-    // 2) Create checkout form + chanre credit card
-    await $73e585bd0c7d6b97$var$stripe.redirectToCheckout({
-      sessionId: session.data.session.id,
-    });
-  } catch (err) {
-    console.log(err);
-    (0, $cf8ea27b34b2137b$export$de026b00723010c1)('error', err);
-  }
-};
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  }),
+);
 
-// DOM ELEMENTS removed for server-side compatibility
-// Event listeners removed for server-side compatibility
+app.use(compression());
 
-//# sourceMappingURL=app.js.map
+// Test middleware
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  // console.log(req.cookies);
+  next();
+});
+
+// 3) ROUTES
+app.use('/', viewRouter);
+app.use('/api/v1/tours', tourRouter);
+app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
+
+app.all('*', (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+app.use(globalErrorHandler);
+
+module.exports = app;
